@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            justify-content: space-between;
+            background: #eee;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        button {
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>To-Do App</h2>
+        <input type="text" id="taskInput" placeholder="Enter a new task">
+        <button onclick="addTask()">Add Task</button>
+        <h3>Pending Tasks</h3>
+        <ul id="pendingList"></ul>
+        <h3>Completed Tasks</h3>
+        <ul id="completedList"></ul>
+    </div>
+
+    <script>
+        function addTask() {
+            let taskInput = document.getElementById("taskInput");
+            let taskText = taskInput.value.trim();
+            if (taskText === "") return;
+            
+            let timestamp = new Date().toLocaleString();
+            let task = { text: taskText, completed: false, addedAt: timestamp };
+            renderTask(task, false);
+            taskInput.value = "";
+        }
+
+        function renderTask(task, isCompleted) {
+            let list = isCompleted ? document.getElementById("completedList") : document.getElementById("pendingList");
+            let li = document.createElement("li");
+            li.innerHTML = `<span>${task.text} <small>(${task.addedAt})</small></span>`;
+            
+            let completeBtn = document.createElement("button");
+            completeBtn.innerText = "Complete";
+            completeBtn.onclick = function() {
+                task.completed = true;
+                task.completedAt = new Date().toLocaleString();
+                li.remove();
+                renderTask(task, true);
+            };
+            
+            let editBtn = document.createElement("button");
+            editBtn.innerText = "Edit";
+            editBtn.onclick = function() {
+                let newText = prompt("Edit Task:", task.text);
+                if (newText) {
+                    task.text = newText;
+                    li.firstChild.textContent = `${task.text} (${task.addedAt})`;
+                }
+            };
+            
+            let deleteBtn = document.createElement("button");
+            deleteBtn.innerText = "Delete";
+            deleteBtn.onclick = function() {
+                li.remove();
+            };
+            
+            if (!isCompleted) li.appendChild(completeBtn);
+            li.appendChild(editBtn);
+            li.appendChild(deleteBtn);
+            list.appendChild(li);
+        }
+    </script>
+</body>
+</html>
